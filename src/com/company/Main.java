@@ -4,31 +4,90 @@ import javax.sound.midi.Patch;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
+import java.math.BigDecimal;
+import java.math.MathContext;
+import java.math.RoundingMode;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.Scanner;
 
 public class Main {
 
     public static void main(String[] args) {
-        System.out.println("Введите путь до файла");
-        Scanner scanner = new Scanner(System.in);
-        String fileName = scanner.next();
+
+
+
+
+
+//        System.out.println("Введите путь до файла");
+//        Scanner scanner = new Scanner(System.in);
+//        String fileName = scanner.next();
+        String fileName = "C:\\Users\\sss\\IdeaProjects\\Computational_Math_Lab_1\\src\\com\\company\\4x5.txt";
         if (verifyMatrixFile(fileName)) {
             System.out.println("Матрица была успешно проверена на целостность");
         }
-        float[][] matrix = loadMatrix(fileName);
+        double[][] matrix = loadMatrix(fileName);
         System.out.println("Матрица была загружена");
         printMatrix(matrix);
         calcRectangleMatrix(matrix);
         printMatrix(matrix);
-
+        calcGays(matrix).forEach(System.out::println);
     }
 
-    public static void calcRectangleMatrix(float[][] matrix){
-        float divider;
+    public static void howTo(){
+        System.out.println("Вы хотите загрузить(1)/написать(2)/для выхода(exit) ?");
+        Scanner scanner = new Scanner(System.in);
+        boolean exit = false;
+        while (!exit) {
+            String answer = scanner.next().toLowerCase();
+            if (answer.equals("1")){
+                System.out.println("Введите путь до файла");
+                String fileName = scanner.next();
+            } else if (answer.equals("2")){
+
+            }else if (answer.equals("exit")) {
+                exit = true;
+            }
+            else
+                System.out.println("Вы ввели неверный ответ, попробуйте еще раз:");
+        }
+    }
+
+
+    public static ArrayList<Double> calcGays(double[][] matrix){
+        int iter = 1;
+        double ans;
+        ArrayList<Double> list = new ArrayList<>(matrix.length);
+        for (int l = matrix.length - 1; l >= 0; l--) {
+            iter++;
+            ans = calcLine(matrix[l], iter );
+            list.add(ans);
+            for (int c = matrix.length - iter; c >= 0; c--) {
+                matrix[c][l] *= ans;
+            }
+        }
+        return list;
+    }
+
+    public static double calcLine(double[] line, int countNums) {
+        //функция вычисляет значение X для треугольной матрицы, если это крайний элемент строки != 0 то делит ответ на него
+        //Иначе вычитает из ответа
+        double ans = line[line.length - 1];
+        for (int i = line.length - 2; i >= line.length - countNums ; i--) {
+            if (i - (line.length - countNums) == 0) {
+                ans /= line[i];
+            } else {
+                ans -= line[i];
+            }
+        }
+        return ans;
+    }
+
+    public static void calcRectangleMatrix(double[][] matrix) {
+        double divider;
         int line;
 
         for (int column = 0; column < matrix.length; column++) {
@@ -46,15 +105,16 @@ public class Main {
         }
     }
 
-    public static void printMatrix(float[][] matrix){
+    public static void printMatrix(double[][] matrix) {
         System.out.println("---------------------------------------------------------");
         for (int i = 0; i < matrix.length; i++) {
             System.out.println();
             for (int j = 0; j < matrix[i].length; j++) {
                 String result = String.format("%.2f", matrix[i][j]);
-                System.out.print("[" + i + "][" + j + "] = " + result + "\t" + "\t");
+                System.out.print("[" + i + "][" + j +"]= " + result + "\t\t");
             }
         }
+        System.out.println();
     }
 
 
@@ -96,7 +156,7 @@ public class Main {
         }
     }
 
-    public static float[][] loadMatrix(String fileName) {
+    public static double[][] loadMatrix(String fileName) {
         Path path = Paths.get(fileName);
         BufferedReader reader = null;
         try {
@@ -122,14 +182,14 @@ public class Main {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        float[][] matrix = new float[lineCount][columnCount];
+        double[][] matrix = new double[lineCount][columnCount];
         try {
             reader = Files.newBufferedReader(path);
             for (int i = 0; i < lineCount; i++) {
                 String line = reader.readLine().trim();
                 String[] strings = line.split(" ");
                 for (int j = 0; j < columnCount; j++) {
-                    matrix[i][j] = Float.parseFloat(strings[j].trim());
+                    matrix[i][j] = Double.parseDouble(strings[j].trim());
                 }
             }
         } catch (IOException e) {
