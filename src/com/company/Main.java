@@ -36,10 +36,10 @@ public class Main {
             line = column + 1;
             for (; line < matrix.length; line++) {
                 //line - считает строку по которой мы проходимся
-                //divider получаем путем деления column-элемента на строку ниже того же столбца
+                //divider получаем путем деления line-column-элемента на column-column
                 divider = matrix[line][column] / matrix[column][column];
                 for (int j = column; j < matrix[column].length; j++) {
-
+                    //получаем нужное значение элемента путем вычитания из значения элемента произведения элементов на главной строке умноженной на делитель
                     matrix[line][j] = matrix[line][j] - ((matrix[column][j]) * divider);
                 }
             }
