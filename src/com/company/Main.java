@@ -1,13 +1,7 @@
 package com.company;
 
-import javax.sound.midi.Patch;
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.IOException;
-import java.math.BigDecimal;
-import java.math.MathContext;
-import java.math.RoundingMode;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -25,8 +19,10 @@ public class Main {
         while (!exit) {
             String answer = scanner.next().toLowerCase();
             if (answer.equals("1")){
+                //получение матрицы из файла
                 System.out.println("Введите путь до файла");
                 fileName = scanner.next();
+                //верификация на целостность данных
                 if (verifyMatrixFile(fileName)) {
                     System.out.println("Матрица была успешно проверена на целостность");
                 }
@@ -42,19 +38,54 @@ public class Main {
             else
                 System.out.println("Вы ввели неверный ответ, попробуйте еще раз:");
         }
-        
+
         System.out.println();
         printMatrix(matrix, "Введенная матрица: ");
+        double[][] saveMatrix = cloneMatrix(matrix);
+//        printMatrix(saveMatrix, "SAVE MATRIX");
         double[][] determinantMatrix = squareMatrix(matrix);
         System.out.println();
         printMatrix(determinantMatrix,"Квадратная матрица: ");
-        Determin dd = new Determin(determinantMatrix);
-        dd.getValue();
         calcRectangleMatrix(matrix);
         System.out.println();
         printMatrix(matrix, "Треугольная матрица: ");
-        printAnswerMatrix(calcGays(matrix));
+        rectangleMatrixDeterminate(matrix);
+        ArrayList<Double> saveAnswers = calcGays(matrix);
+        printAnswerMatrix(saveAnswers);
+        divergence(saveMatrix, saveAnswers);
+    }
 
+    public static double[][] cloneMatrix(double[][] oldMatrix){
+        double[][] newMatrix = new double[oldMatrix.length][oldMatrix[0].length];
+        for (int i = 0; i < newMatrix.length; i++) {
+            for (int j = 0; j < newMatrix[0].length; j++) {
+                newMatrix[i][j] = oldMatrix[i][j];
+            }
+        }
+        return newMatrix;
+    }
+
+    private static void divergence(double[][] saveMatrix, ArrayList<Double> arrayList) {
+        double ans = 0;
+        System.out.println("---------------------------------------------------------");
+        System.out.println("Вектор невязки: ");
+        System.out.println("---------------------------------------------------------");
+        for (int i = 0; i < saveMatrix.length; i++) {
+            for (int j = 0; j < saveMatrix[0].length - 1; j++) {
+                ans += saveMatrix[i][j] * arrayList.get(j);
+            }
+            System.out.println("["+i+"]= " + (ans - saveMatrix[i][saveMatrix[0].length - 1]));
+            ans = 0;
+        }
+    }
+
+    private static void rectangleMatrixDeterminate(double[][] matrix) {
+        int det = 1;
+        for (int i = 0; i < matrix.length; i++) {
+            det *= matrix[i][i];
+        }
+        System.out.println("---------------------------------------------------------");
+        System.out.println("Детерминант: " + det);
     }
 
     public static void printAnswerMatrix(ArrayList<Double> list){
@@ -111,7 +142,7 @@ public class Main {
         for (int l = matrix.length - 1; l >= 0; l--) {
             iter++;
             ans = calcLine(matrix[l], iter );
-            list.add(ans);
+            list.add(0, ans);
             for (int c = matrix.length - iter; c >= 0; c--) {
                 matrix[c][l] *= ans;
             }
