@@ -17,24 +17,67 @@ import java.util.Scanner;
 public class Main {
 
     public static void main(String[] args) {
-
-
-
-
-
-//        System.out.println("Введите путь до файла");
-//        Scanner scanner = new Scanner(System.in);
-//        String fileName = scanner.next();
-        String fileName = "C:\\Users\\sss\\IdeaProjects\\Computational_Math_Lab_1\\src\\com\\company\\4x5.txt";
-        if (verifyMatrixFile(fileName)) {
-            System.out.println("Матрица была успешно проверена на целостность");
+        double[][] matrix = new double[0][];
+        String fileName = null;
+        System.out.println("Вы хотите загрузить(1)/написать(2)/для выхода(exit) ?");
+        Scanner scanner = new Scanner(System.in);
+        boolean exit = false;
+        while (!exit) {
+            String answer = scanner.next().toLowerCase();
+            if (answer.equals("1")){
+                System.out.println("Введите путь до файла");
+                fileName = scanner.next();
+                if (verifyMatrixFile(fileName)) {
+                    System.out.println("Матрица была успешно проверена на целостность");
+                }
+                matrix = loadMatrix(fileName);
+                exit = true;
+            } else if (answer.equals("2")){
+                // Получение матрицы с клавиатуры
+                matrix = Utils.createMatrixFromKeyBoard();
+                exit = true;
+            }else if (answer.equals("exit")) {
+                exit = true;
+            }
+            else
+                System.out.println("Вы ввели неверный ответ, попробуйте еще раз:");
         }
-        double[][] matrix = loadMatrix(fileName);
-        System.out.println("Матрица была загружена");
-        printMatrix(matrix);
+        
+        System.out.println();
+        printMatrix(matrix, "Введенная матрица: ");
+        double[][] determinantMatrix = squareMatrix(matrix);
+        System.out.println();
+        printMatrix(determinantMatrix,"Квадратная матрица: ");
+        Determin dd = new Determin(determinantMatrix);
+        dd.getValue();
         calcRectangleMatrix(matrix);
-        printMatrix(matrix);
-        calcGays(matrix).forEach(System.out::println);
+        System.out.println();
+        printMatrix(matrix, "Треугольная матрица: ");
+        printAnswerMatrix(calcGays(matrix));
+
+    }
+
+    public static void printAnswerMatrix(ArrayList<Double> list){
+        System.out.println("---------------------------------------------------------");
+        System.out.println("Cтолбец ответов :");
+        System.out.println("---------------------------------------------------------");
+        var ref = new Object() {
+            int i = 0;
+        };
+        list.forEach(x -> {
+            System.out.println("["+ ref.i +"][0] = " + x);
+            ref.i++;
+        });
+    }
+
+    public static double[][] squareMatrix(double[][] matrix){
+        double[][] newMatrix = new double[matrix.length][matrix[0].length - 1];
+        for (int i = 0; i < matrix[0].length - 1; i++) {
+            for (int j = 0; j < matrix.length; j++) {
+                newMatrix[i][j] = matrix[i][j];
+            }
+        }
+        return newMatrix;
     }
 
     public static void howTo(){
@@ -47,6 +90,10 @@ public class Main {
                 System.out.println("Введите путь до файла");
                 String fileName = scanner.next();
             } else if (answer.equals("2")){
+                System.out.println("Вводим матрицу с консоли");
+                // Получение матрицы с клавиатуры
+                double[][] matrix = Utils.createMatrixFromKeyBoard();
+                // Нахождение решения
 
             }else if (answer.equals("exit")) {
                 exit = true;
@@ -105,7 +152,9 @@ public class Main {
         }
     }
 
-    public static void printMatrix(double[][] matrix) {
+    public static void printMatrix(double[][] matrix, String name) {
+        System.out.println("---------------------------------------------------------");
+        System.out.println(name);
         System.out.println("---------------------------------------------------------");
         for (int i = 0; i < matrix.length; i++) {
             System.out.println();
@@ -114,6 +163,7 @@ public class Main {
                 System.out.print("[" + i + "][" + j +"]= " + result + "\t\t");
             }
         }
+        System.out.println();
         System.out.println();
     }
 
