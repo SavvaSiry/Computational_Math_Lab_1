@@ -41,13 +41,13 @@ public class Main {
 
         System.out.println();
         printMatrix(matrix, "Введенная матрица: ");
+        //сохраняю в память полученную матрицу
         double[][] saveMatrix = cloneMatrix(matrix);
-//        printMatrix(saveMatrix, "SAVE MATRIX");
+        //Беру матрицу без коэффицентов, чтобы
         double[][] determinantMatrix = squareMatrix(matrix);
         System.out.println();
         printMatrix(determinantMatrix,"Квадратная матрица: ");
         calcRectangleMatrix(matrix);
-        System.out.println();
         printMatrix(matrix, "Треугольная матрица: ");
         rectangleMatrixDeterminate(matrix);
         ArrayList<Double> saveAnswers = calcGays(matrix);
@@ -151,8 +151,8 @@ public class Main {
     }
 
     public static double calcLine(double[] line, int countNums) {
-        //функция вычисляет значение X для треугольной матрицы, если это крайний элемент строки != 0 то делит ответ на него
-        //Иначе вычитает из ответа
+        //функция вычисляет значение X для треугольной матрицы, если это крайний элемент строки то делит ответ на него
+        //иначе вычитает из ответа
         double ans = line[line.length - 1];
         for (int i = line.length - 2; i >= line.length - countNums ; i--) {
             if (i - (line.length - countNums) == 0) {
